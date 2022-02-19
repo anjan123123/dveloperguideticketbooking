@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
-    <http:listener-config name="develepersguideproject-httpListenerConfig">
-        <http:listener-connection host="0.0.0.0" port="8081" />
-    </http:listener-config>
-    <apikit:config name="develepersguideproject-config" api="resource::65247f83-b97c-4bc7-883f-d02daad12bc0:develepersguideproject:1.0.1:raml:zip:develepersguideproject.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
     <flow name="develepersguideproject-main">
         <http:listener config-ref="develepersguideproject-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -15,86 +12,7 @@
             </http:error-response>
         </http:listener>
         <apikit:router config-ref="develepersguideproject-config" />
-        <error-handler>
-            <on-error-propagate type="APIKIT:BAD_REQUEST">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Bad request"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Resource not found"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Method not allowed"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Not acceptable"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Unsupported media type"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Not Implemented"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-        </error-handler>
+		<error-handler ref="global_error_handlerError_Handler" />
     </flow>
     <flow name="develepersguideproject-console">
         <http:listener config-ref="develepersguideproject-httpListenerConfig" path="/console/*">
@@ -123,99 +41,25 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="get:\booking\(transporttype)\routes:develepersguideproject-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
+    <sub-flow name="develepersguideprojectSub_Flowforvariables" doc:id="f6a52ed2-1784-42b3-8241-2b231b6f3f06" >
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
             <ee:variables>
-                <ee:set-variable variableName="transporttype">attributes.uriParams.'transporttype'</ee:set-variable>
+                <ee:set-variable variableName="transporttype"><![CDATA[attributes.uriParams.'transporttype']]></ee:set-variable>
+				<ee:set-variable variableName="transactionid"><![CDATA[%dw 2.0
+output application/java
+---
+attributes.headers.transactionid]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-[
-  {
-    companycode: "transnational",
-    originlocation: {
-      locationcode: "hyd-ben",
-      locationdesc: "hyderabadben"
-    },
-    destinationlocation: {
-      locationcode: "mub-del",
-      locationdesc: "delhi"
-    }
-  }, 
-  {
-    companycode: "transnational",
-    originlocation: {
-      locationcode: "-ben",
-      locationdesc: "hyderabadben"
-    },
-    destinationlocation: {
-      locationcode: "mub-del",
-      locationdesc: "delhi"
-    }
-  }, 
-  {
-    companycode: "transnational",
-    originlocation: {
-      locationcode: "hyd-ben",
-      locationdesc: "hyderabadben"
-    },
-    destinationlocation: {
-      locationcode: "mub-del",
-      locationdesc: "delhi"
-    }
-  }
-]]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+	</sub-flow>
+	<flow name="get:\booking\(transporttype)\routes:develepersguideproject-config">
+        <flow-ref doc:name="Flow Reference to call var transid and uriparam transporttype for routes" doc:id="311e9524-e0ba-48fa-9dac-3ac9983a9507" name="develepersguideprojectSub_Flowforvariables"/>
+		<logger level="INFO" doc:name="Logger for get routes transactionid" doc:id="3ec5d791-e837-4b3c-9ac7-5316c95b1eae" message="travelontip routes transactionId:#[vars.transactionid]"/>
+		<flow-ref doc:name="Flow Reference to call database for travelontip routes" doc:id="2e05e2ae-4cad-4956-93bc-4a06d3a01e0f" name="trvaelontip-get_-routes-_apiFlow"/>
     </flow>
     <flow name="get:\booking\(transporttype)\schedules:develepersguideproject-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
-            <ee:variables>
-                <ee:set-variable variableName="transporttype">attributes.uriParams.'transporttype'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-[
-  {
-    companyname: "travelontip",
-    availableseats: "90",
-    departuredatetime: "2099-02-31T16:41:41",
-    travelroute: {
-      destinationlocation: {
-        locationcode: "klg-my",
-        locationdesc: "klangmalaysia"
-      },
-      originlocation: {
-        locationcode: "ben-sg",
-        locationdesc: "beauna vista singapore"
-      }
-    }
-  }, 
-  {
-    companyname: "travelontip",
-    availableseats: "90",
-    departuredatetime: "2099-02-31T16:41:41",
-    travelroute: {
-      destinationlocation: {
-        locationcode: "klg-my",
-        locationdesc: "klangmalaysia"
-      },
-      originlocation: {
-        locationcode: "ben-sg",
-        locationdesc: "beauna vista singapore "
-      }
-    }
-  }
-]]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+        <flow-ref doc:name="Flow Reference  to call var transid and uriparam transporttype for schedules" doc:id="24d26906-2618-4db2-a415-a0e116b0ea4e" name="develepersguideprojectSub_Flowforvariables"/>
+		<logger level="INFO" doc:name="Logger for schedule transactionid" doc:id="734cfaad-43c5-449d-9a6c-06407418d3dc" message="travelontip schedule transactionid:#[vars.transactionid]"/>
+		<flow-ref doc:name="Flow Reference to call database for travelontip schedule" doc:id="20aed578-c018-444a-a315-b45bdef9dcc4" name="travelontip-get-schedule-apiFlow"/>
     </flow>
 </mule>

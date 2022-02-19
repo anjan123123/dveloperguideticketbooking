@@ -1,0 +1,27 @@
+%dw 2.0
+
+type auto_ae1c27be_0101_483d_bbec_f83c72930dfd_Output_Attributes = {|
+  clientCertificate?: {|
+    publicKey?: {|  |}, 
+    "type"?: String, 
+    encoded?: Binary
+  |}, 
+  headers: {| transactionid: String |}, 
+  listenerPath: String, 
+  method: String, 
+  queryParams: {|
+    companyname?: String, 
+    departurelocation?: String, 
+    destinationlocation?: String
+  |}, 
+  queryString: String, 
+  relativePath: String, 
+  remoteAddress: String, 
+  requestPath: String, 
+  requestUri: String, 
+  scheme: String, 
+  uriParams: {| transporttype: String |}, 
+  version: String, 
+  localAddress: String
+|}
+
